@@ -39,6 +39,7 @@ def pdf_extractor(file_name):
     table = table.replace('\n\n', '\n')
     table = table.replace('\n\n', '\n')
     table = table.replace('\n\n', '\n')
+    #table = re.sub(r'OP \d{6,}/\d+([0-9])', r'OP \g<0> \1', table)
 
     return table
 
@@ -91,10 +92,15 @@ def dict_maker(modified_table):
                 transaction = {"Sum": "", "Details": "", "Date": "", "Status": ""}
         elif line.replace(',', '').replace('.', '').isdigit():
             # This line contains the sum
+            line = line.replace(',', '.')
             transaction["Sum"] = line.strip()
         else:
             # This line contains the transaction details
             transaction["Details"] += line.strip() + " "
+
+    # Strip whitespace from the Details column
+    for transaction in transactions:
+        transaction["Details"] = transaction["Details"].strip()
 
     # Add the last transaction to the list of transactions
     if "credit" in transaction["Details"].lower():
@@ -104,3 +110,8 @@ def dict_maker(modified_table):
     transactions.append(transaction)
     transactions.pop()
     return transactions
+
+
+if __name__ == '__main__':
+    a = pdf_extractor('SV08870913300_2023_03.pdf')
+    print(a)
