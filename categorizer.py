@@ -1,7 +1,8 @@
 import openpyxl
-from openpyxl.styles import Alignment
+from openpyxl.styles import Alignment, PatternFill
 import string
-import re
+from categories import taxes, extractions, fuel, deliveries, supermarkets, salary, datorii_in, datorii_out, diverse, \
+    fastfood, clothes
 
 workbook = openpyxl.load_workbook('C:/Users/cipri/OneDrive/Desktop/Financial/04_23.xlsx')
 source_sheet = workbook['Sheet1']
@@ -11,12 +12,23 @@ if 'Sheet2' not in workbook.sheetnames:
 sheet2 = workbook['Sheet2']
 
 keyword_categories = {
-    'Shopping': ['SRL', 'SCO', 'SHOPPING'],
-    'Salary': ["Alim conventie"]
+    'Supermarkets': ['CARREFOUR', 'MEDIAGALAXY', 'PRO SPERANTA', 'LIDL', 'PROFI', 'BAMT', 'Surii Mari', 'MTV',
+                     'NADIDA', 'AUCHAN', 'ALTEX', 'KAUFLAND', 'ATTRIUS', 'ILUISI', 'EUR COMTUR'],
+    'Salary': ["Alim conventie"],
+    'Deliveries': ['EMAG'],
+    'Plata datorii': ['Incasare intrab'],
+    'Dat datorii': ['Plata i'],
+    'Fuel': ['ARAL', 'OMV', 'PETROIL'],
+    'Extrageri': ['Retrageri'],
+    'Taxes': ['Comision'],
+    'Fast-food': ['SELECT', 'ISTANBUL'],
+    'Diverse': ['BOLTEU', 'Google Payment'],
+    'Clothes': ['NEW YORKER']
 }
 
 letters_uppercase = string.ascii_uppercase
-
+red_fill = PatternFill(start_color='FFC7CE', end_color='FFC7CE', fill_type='solid')  # red fill color
+green_fill = PatternFill(start_color='C6EFCE', end_color='C6EFCE', fill_type='solid')  # green fill color
 # Iterate over the keys of the keyword_categories dictionary
 for i, key in enumerate(keyword_categories.keys()):
     first_let = letters_uppercase[i * 2]
@@ -32,38 +44,24 @@ for i, key in enumerate(keyword_categories.keys()):
     varB1.alignment = Alignment(horizontal='center', vertical='center')
     varB2.alignment = Alignment(horizontal='center', vertical='center')
 
-# Shopping
-pattern = r'Card/Terminale OP \d+(?:/\d+)? Card nr\d+|Utilizare POS comerciant .*'
-sheet2_row = 3
-first_vals = list(keyword_categories.values())[0]
-for row in source_sheet.iter_rows(min_row=2, min_col=1, max_col=2, values_only=True):
-    for cell in row:
-        if isinstance(cell, float):
-            continue
-        else:
-            cell = re.sub(pattern, '', str(cell).strip())
-        for i in first_vals:
-            if i in str(cell):
-
-                sheet2.cell(row=sheet2_row, column=1).value = cell.strip()
-                sheet2.cell(row=sheet2_row, column=2).value = float(row[0])
-                sheet2_row += 1
+    if key == "Salary" or key == "Plata datorii":
+        varA.fill = green_fill
+    else:
+        varA.fill = red_fill
 
 
-# Salary
-sheet2_row = 3
-second_vals = list(keyword_categories.values())[1]
-for row in source_sheet.iter_rows(min_row=2, min_col=1, max_col=2, values_only=True):
-    for cell in row:
-        if isinstance(cell, float):
-            continue
-        else:
-            cell = cell.split('Automat OPH00004837 Dl CAPATA CIPRIAN GHEORGHE ')[-1].strip()
-        for i in second_vals:
-            if i in str(cell):
-                sheet2.cell(row=sheet2_row, column=3).value = cell.strip()
-                sheet2.cell(row=sheet2_row, column=4).value = float(row[0])
-                sheet2_row += 1
+
+supermarkets(keyword_categories, source_sheet, sheet2)
+salary(keyword_categories, source_sheet, sheet2)
+deliveries(keyword_categories, source_sheet, sheet2)
+datorii_in(keyword_categories, source_sheet, sheet2)
+datorii_out(keyword_categories, source_sheet, sheet2)
+fuel(keyword_categories, source_sheet, sheet2)
+extractions(keyword_categories, source_sheet, sheet2)
+taxes(keyword_categories, source_sheet, sheet2)
+fastfood(keyword_categories, source_sheet, sheet2)
+diverse(keyword_categories, source_sheet, sheet2)
+clothes(keyword_categories, source_sheet, sheet2)
 
 # Sheet 3
 if 'Sheet3' not in workbook.sheetnames:
