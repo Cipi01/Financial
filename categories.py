@@ -26,7 +26,7 @@ def salary(keyword_categories, source_sheet, written_sheet):
     second_vals = list(keyword_categories.values())[1]
     for row in source_sheet.iter_rows(min_row=2, min_col=1, max_col=2, values_only=True):
         for cell in row:
-            if isinstance(cell, float):
+            if isinstance(cell, float) or isinstance(cell, int):
                 continue
             else:
                 cell = cell.split('Automat OPH00004837 Dl CAPATA CIPRIAN GHEORGHE ')[-1].strip()

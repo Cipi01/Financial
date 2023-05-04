@@ -4,6 +4,11 @@ import string
 from categories import taxes, extractions, fuel, deliveries, supermarkets, salary, datorii_in, datorii_out, diverse, \
     fastfood, clothes
 
+
+def align(sheet_cell):
+    sheet_cell.alignment = Alignment(horizontal='center', vertical='center')
+
+
 workbook = openpyxl.load_workbook('C:/Users/cipri/OneDrive/Desktop/Financial/04_23.xlsx')
 source_sheet = workbook['Sheet1']
 
@@ -38,18 +43,16 @@ for i, key in enumerate(keyword_categories.keys()):
     sheet2[f'{first_let}2'] = 'nume'
     sheet2[f'{last_let}2'] = 'suma'
     varA = sheet2[f'{first_let}1']
-    varA.alignment = Alignment(horizontal='center', vertical='center')
+    align(varA)
     varB1 = sheet2[f'{first_let}2']
     varB2 = sheet2[f'{last_let}2']
-    varB1.alignment = Alignment(horizontal='center', vertical='center')
-    varB2.alignment = Alignment(horizontal='center', vertical='center')
+    align(varB1)
+    align(varB2)
 
     if key == "Salary" or key == "Plata datorii":
         varA.fill = green_fill
     else:
         varA.fill = red_fill
-
-
 
 supermarkets(keyword_categories, source_sheet, sheet2)
 salary(keyword_categories, source_sheet, sheet2)
@@ -74,11 +77,32 @@ for i in range(len(keyword_categories.keys())):
     letter = letters_uppercase[i]
     letters.append(letter)
 sheet3.merge_cells(f'A1:{letters[-1]}1')
-sheet3['A1'].alignment = Alignment(horizontal='center', vertical='center')
+align(sheet3['A1'])
 for i, key in enumerate(keyword_categories.keys()):
     first_let = letters_uppercase[i]
     second_let = letters_uppercase[i * 2 + 1]
     sheet3[f'{first_let}2'] = f'{key}'
     sheet3[f'{first_let}3'] = f'=SUM(Sheet2!{second_let}3:{second_let}100)'
+    varA = sheet3[f'{first_let}2']
 
+    if key == "Salary" or key == "Plata datorii":
+        varA.fill = green_fill
+    else:
+        varA.fill = red_fill
+
+sheet3['A6'] = 'TOTAL'
+sheet3.merge_cells('A6:B6')
+align(sheet3['A6'])
+
+sheet3['A7'] = 'CREDIT'
+sheet3['B7'] = 'DEBIT'
+align(sheet3['A7'])
+align(sheet3['B7'])
+
+sheet3['A8'] = '=SUMIF(Sheet1!D2:D1000,"Credit",Sheet1!A2:A1000)'
+sheet3['B8'] = '=SUMIF(Sheet1!D2:D1000,"Debit",Sheet1!A2:A1000)'
+align(sheet3['A8'])
+align(sheet3['B8'])
+sheet3['A8'].fill = green_fill
+sheet3['B8'].fill = red_fill
 workbook.save('example.xlsx')

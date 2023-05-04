@@ -93,7 +93,7 @@ def dict_maker(modified_table):
         elif line.replace(',', '').replace('.', '').isdigit():
             # This line contains the sum
             line = line.replace(',', '.')
-            transaction["Sum"] = line.strip()
+            transaction["Sum"] = float(line.strip())
         else:
             # This line contains the transaction details
             transaction["Details"] += line.strip() + " "
