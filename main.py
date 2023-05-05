@@ -2,7 +2,7 @@ import pandas as pd
 import datetime
 from TextFilter import pdf_extractor, table_modifier, dict_maker
 
-table = pdf_extractor('SV08870913300_2023_03.pdf')
+table = pdf_extractor('Extrase/SV08870913300_2023_04.pdf')
 modified_table = table_modifier(table)
 transactions = dict_maker(modified_table)
 
